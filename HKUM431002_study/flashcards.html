@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#FAFAF8">
+<title>TPK Study — HKUM4310</title>
+<style>
+  :root{
+    --bg:#FAFAF8;
+    --surface:#FFFFFF;
+    --surface-2:#F4F4F2;
+    --text:#0A0A0A;
+    --text-2:#525252;
+    --text-3:#A3A3A3;
+    --border:rgba(0,0,0,.06);
+    --border-2:rgba(0,0,0,.1);
+    --accent:#6366F1;
+    --accent-2:#818CF8;
+    --accent-soft:rgba(99,102,241,.08);
+    --success:#10B981;
+    --success-soft:rgba(16,185,129,.08);
+    --error:#EF4444;
+    --error-soft:rgba(239,68,68,.08);
+    --warning:#F59E0B;
+    --warning-soft:rgba(245,158,11,.08);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.04);
+    --shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.04);
+    --shadow-lg:0 20px 50px rgba(0,0,0,.08);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0B0B0D;
+      --surface:#161618;
+      --surface-2:#1F1F22;
+      --text:#FAFAFA;
+      --text-2:#A3A3A3;
+      --text-3:#525252;
+      --border:rgba(255,255,255,.06);
+      --border-2:rgba(255,255,255,.12);
+      --accent-soft:rgba(99,102,241,.18);
+      --success-soft:rgba(16,185,129,.15);
+      --error-soft:rgba(239,68,68,.15);
+      --warning-soft:rgba(245,158,11,.15);
+      --shadow:0 1px 3px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.4);
+      --shadow-lg:0 20px 50px rgba(0,0,0,.5);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.5;
+    letter-spacing:-.01em;
+    overflow-x:hidden;
+  }
+  button{font-family:inherit;color:inherit;cursor:pointer}
+
+  /* Header */
+  .header{
+    position:sticky;top:0;z-index:100;
+    background:rgba(250,250,248,.7);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid var(--border);
+  }
+  @media (prefers-color-scheme:dark){.header{background:rgba(11,11,13,.7)}}
+  .header-inner{
+    max-width:720px;margin:0 auto;
+    padding:14px 24px;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-weight:700;font-size:16px;letter-spacing:-.02em;
+    cursor:pointer;background:none;border:none;padding:6px 0;
+  }
+  .brand-dot{
+    width:10px;height:10px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 0 0 4px var(--accent-soft);
+  }
+  .stats{display:flex;gap:14px;align-items:center;font-variant-numeric:tabular-nums}
+  .stat{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:13px;font-weight:600;color:var(--text-2);
+    padding:6px 10px;border-radius:99px;background:var(--surface-2);
+    transition:transform .2s;
+  }
+  .stat.pulse{animation:pulse .5s ease}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .stat .v{color:var(--text)}
+
+  .container{max-width:720px;margin:0 auto;padding:32px 24px 80px}
+
+  /* Home */
+  .hero{margin-bottom:32px}
+  .hero h1{
+    font-size:32px;line-height:1.1;letter-spacing:-.03em;
+    font-weight:700;margin:0 0 8px;
+  }
+  .hero p{color:var(--text-2);margin:0;font-size:15px}
+  .resume-bar{
+    margin:24px 0 32px;padding:16px 20px;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;display:flex;align-items:center;gap:16px;
+    box-shadow:var(--shadow-sm);
+  }
+  .resume-bar .label{
+    font-size:11px;font-weight:700;letter-spacing:.06em;
+    color:var(--text-3);text-transform:uppercase;
+  }
+  .resume-bar .v{font-size:14px;font-weight:600;margin-top:2px}
+  .resume-bar .big{font-size:22px;font-weight:700;letter-spacing:-.02em}
+  .resume-bar > div{display:flex;flex-direction:column}
+  .resume-bar > div + div{margin-left:auto;text-align:right}
+
+  .modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .module{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    text-align:left;
+    color:inherit;
+    width:100%;
+    transition:transform .2s cubic-bezier(.22,.61,.36,1),box-shadow .2s,border-color .2s;
+    position:relative;
+    overflow:hidden;
+  }
+  .module:hover{
+    border-color:var(--border-2);
+    transform:translateY(-3px);
+    box-shadow:var(--shadow);
+  }
+  .module:active{transform:translateY(-1px)}
+  .module-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:8px;
+    background:var(--accent-soft);color:var(--accent);
+    font-size:13px;font-weight:700;
+    margin-bottom:12px;
+  }
+  .module.done .module-badge{background:var(--success-soft);color:var(--success)}
+  .module-title{
+    font-size:15px;font-weight:600;
+    margin-bottom:14px;letter-spacing:-.01em;line-height:1.35;
+    min-height:42px;
+  }
+  .module-progress{
+    display:flex;align-items:center;gap:10px;
+    font-size:12px;color:var(--text-2);font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .pbar{
+    flex:1;height:4px;background:var(--surface-2);
+    border-radius:99px;overflow:hidden;
+  }
+  .pbar > div{
+    height:100%;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    border-radius:99px;
+    transition:width .6s cubic-bezier(.22,.61,.36,1);
+  }
+  .module.done .pbar > div{background:linear-gradient(90deg,var(--success),#34D399)}
+
+  /* Study */
+  .study-head{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:20px;gap:16px;
+  }
+  .back-btn{
+    background:none;border:none;color:var(--text-2);
+    font-size:14px;padding:8px 12px;margin-left:-12px;
+    border-radius:8px;font-weight:500;
+    transition:background .15s,color .15s;
+  }
+  .back-btn:hover{background:var(--surface-2);color:var(--text)}
+  .study-prog{
+    font-size:13px;color:var(--text-2);font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .session-bar{
+    height:3px;background:var(--border);
+    border-radius:99px;margin-bottom:32px;overflow:hidden;
+  }
+  .session-bar > div{
+    height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition:width .5s cubic-bezier(.22,.61,.36,1);
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:32px;
+    box-shadow:var(--shadow-lg);
+    display:flex;flex-direction:column;
+    min-height:380px;
+    animation:slideIn .4s cubic-bezier(.22,.61,.36,1);
+  }
+  @keyframes slideIn{
+    from{opacity:0;transform:translateY(12px) scale(.98)}
+    to{opacity:1;transform:none}
+  }
+  .card.shake{animation:shake .35s ease}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-6px)}
+    75%{transform:translateX(6px)}
+  }
+  .card-label{
+    font-size:11px;font-weight:700;letter-spacing:.08em;
+    color:var(--text-3);text-transform:uppercase;
+    margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .card-label .mastered-pill{
+    background:var(--success-soft);color:var(--success);
+    padding:3px 8px;border-radius:99px;font-size:10px;
+    letter-spacing:.06em;
+  }
+  .card-q{
+    font-size:22px;font-weight:600;line-height:1.35;
+    letter-spacing:-.02em;margin-bottom:24px;
+  }
+  .options{display:flex;flex-direction:column;gap:8px}
+  .option{
+    background:var(--surface);
+    border:1.5px solid var(--border-2);
+    border-radius:14px;
+    padding:14px 16px;
+    text-align:left;
+    font-size:15px;font-weight:500;color:var(--text);
+    transition:all .15s ease;
+    display:flex;align-items:flex-start;gap:12px;line-height:1.4;
+  }
+  .option:hover:not(:disabled){
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    transform:translateX(2px);
+  }
+  .option:disabled{cursor:default}
+  .option-letter{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:7px;
+    background:var(--surface-2);
+    font-size:12px;font-weight:700;color:var(--text-2);
+    flex-shrink:0;letter-spacing:0;
+  }
+  .option.correct{border-color:var(--success);background:var(--success-soft)}
+  .option.correct .option-letter{background:var(--success);color:#fff}
+  .option.wrong{border-color:var(--error);background:var(--error-soft)}
+  .option.wrong .option-letter{background:var(--error);color:#fff}
+
+  .feedback{
+    margin-top:18px;padding:14px 16px;border-radius:12px;
+    font-size:14px;line-height:1.5;animation:fadeIn .3s ease;
+  }
+  @keyframes fadeIn{
+    from{opacity:0;transform:translateY(6px)}
+    to{opacity:1;transform:none}
+  }
+  .feedback.success{background:var(--success-soft);color:var(--success)}
+  .feedback.error{background:var(--error-soft);color:var(--error)}
+  .feedback strong{display:block;margin-bottom:4px;font-weight:700}
+  .feedback .explain{color:var(--text-2);font-weight:500;margin-top:4px;font-size:13.5px}
+  .feedback.success .explain{color:var(--text-2)}
+
+  /* Concept card */
+  .concept-front{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:20px 0;
+    font-size:24px;font-weight:600;letter-spacing:-.025em;line-height:1.3;
+  }
+  .concept-back{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    text-align:left;padding:16px 0;
+    font-size:16px;font-weight:500;color:var(--text-2);
+    line-height:1.55;animation:fadeIn .3s ease;
+  }
+  .reveal-btn{
+    background:var(--text);color:var(--bg);
+    border:none;padding:14px 28px;border-radius:99px;
+    font-size:15px;font-weight:600;
+    align-self:center;margin-top:20px;
+    transition:transform .15s,opacity .15s;
+  }
+  .reveal-btn:hover{transform:scale(1.03);opacity:.9}
+  .reveal-btn:active{transform:scale(.98)}
+
+  .concept-actions{
+    display:flex;gap:10px;margin-top:20px;
+  }
+  .concept-actions button{
+    flex:1;padding:14px;border-radius:99px;
+    font-size:14px;font-weight:600;
+    border:1.5px solid var(--border-2);background:var(--surface);color:var(--text);
+    transition:all .15s ease;
+  }
+  .concept-actions button:hover{transform:translateY(-1px)}
+  .concept-actions button.dunno{border-color:var(--warning);color:var(--warning)}
+  .concept-actions button.dunno:hover{background:var(--warning-soft)}
+  .concept-actions button.got{border-color:var(--success);color:var(--success)}
+  .concept-actions button.got:hover{background:var(--success-soft)}
+
+  .next-btn{
+    background:var(--accent);color:#fff;
+    border:none;padding:14px 32px;border-radius:99px;
+    font-size:15px;font-weight:600;
+    margin-top:18px;align-self:center;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .next-btn:hover{
+    transform:scale(1.03);
+    box-shadow:0 12px 24px rgba(99,102,241,.3);
+  }
+  .next-btn:active{transform:scale(.98)}
+
+  /* Complete */
+  .complete{text-align:center;padding:40px 0;animation:fadeIn .5s ease}
+  .complete-emoji{font-size:72px;margin-bottom:12px;line-height:1}
+  .complete h2{font-size:30px;margin:0 0 8px;letter-spacing:-.025em}
+  .complete .sub{color:var(--text-2);margin:0 0 32px;font-size:15px}
+  .summary{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+    max-width:440px;margin:0 auto 32px;
+  }
+  .summary-cell{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:18px 12px;
+  }
+  .summary-cell .v{
+    font-size:30px;font-weight:700;letter-spacing:-.03em;
+    margin-bottom:4px;font-variant-numeric:tabular-nums;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .summary-cell .l{
+    font-size:11px;color:var(--text-2);
+    text-transform:uppercase;letter-spacing:.06em;font-weight:600;
+  }
+
+  /* Floating XP */
+  .xp-pop{
+    position:fixed;pointer-events:none;
+    font-weight:700;font-size:22px;color:var(--success);
+    animation:xpRise 1.2s cubic-bezier(.22,.61,.36,1) forwards;
+    z-index:1000;
+    text-shadow:0 4px 20px rgba(16,185,129,.3);
+  }
+  @keyframes xpRise{
+    0%{opacity:0;transform:translateY(20px) scale(.8)}
+    15%{opacity:1;transform:translateY(0) scale(1.05)}
+    100%{opacity:0;transform:translateY(-80px) scale(.9)}
+  }
+  /* Streak milestone */
+  .burst{
+    position:fixed;inset:0;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;z-index:999;
+  }
+  .burst-text{
+    font-size:80px;font-weight:800;letter-spacing:-.05em;
+    background:linear-gradient(135deg,#F59E0B,#EF4444);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:burst 1.8s cubic-bezier(.22,.61,.36,1) forwards;
+  }
+  @keyframes burst{
+    0%{opacity:0;transform:scale(.5)}
+    15%{opacity:1;transform:scale(1.08)}
+    60%{opacity:1;transform:scale(1)}
+    100%{opacity:0;transform:scale(.95) translateY(-20px)}
+  }
+
+  /* Footer */
+  .footer{
+    margin:48px auto 0;max-width:720px;padding:0 24px 24px;
+    color:var(--text-3);font-size:12px;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    flex-wrap:wrap;
+  }
+  .reset-btn{
+    background:none;border:1px solid var(--border-2);
+    color:var(--text-3);padding:6px 12px;border-radius:8px;
+    font-size:12px;font-weight:500;transition:all .15s;
+  }
+  .reset-btn:hover{color:var(--error);border-color:var(--error)}
+
+  /* Mobile */
+  @media (max-width:640px){
+    .hero h1{font-size:26px}
+    .header-inner{padding:12px 18px}
+    .container{padding:24px 18px 60px}
+    .stat{padding:5px 8px;font-size:12px}
+    .stat .icon{display:none}
+    .card{padding:24px;border-radius:20px;min-height:340px}
+    .card-q{font-size:19px}
+    .concept-front{font-size:21px}
+    .modules{grid-template-columns:1fr;gap:10px}
+    .resume-bar{padding:14px 16px}
+    .resume-bar .big{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <button class="brand" onclick="goHome()">
+      <span class="brand-dot"></span>
+      <span>TPK Study</span>
+    </button>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<main class="container" id="app"></main>
+
+<footer class="footer">
+  <span>HKUM4310 · Tindak Pidana Korupsi (Edisi 2)</span>
+  <button class="reset-btn" onclick="resetAll()">Reset progres</button>
+</footer>
+
+<script>
+// ===================== DATA =====================
+const DECKS = [
+  {
+    id: 1,
+    title: "Istilah, Pengertian & Ruang Lingkup TPK",
+    cards: [
+      { t:'mc', q:"TPK merupakan kejahatan serius — dikemukakan dalam konferensi internasional United Nations pada tahun ....", o:["2001","2002","2003","2004"], c:2, e:"UNCAC diterima Majelis Umum PBB pada 31 Oktober 2003." },
+      { t:'mc', q:"Istilah corruptio mempunyai arti kerusakan; dalam Naskah Kuno Negara Kertagama, istilah corrupt berarti rusak. Hal tersebut dikemukakan oleh ....", o:["Lilik Mulyadi","Moeljatno","Sudarto","Roeslan Saleh"], c:2, e:"Menurut Sudarto, istilah corruptio berarti kerusakan." },
+      { t:'mc', q:"Yang BUKAN UU TPK yang berlaku di Indonesia adalah ....", o:["UU 31/1999","UU 20/2001","UU 30/2002","UU 31/1998"], c:3, e:"UU 31/1998 tidak ada. UU 30/2002 adalah UU KPK, masih bagian rezim TPK." },
+      { t:'mc', q:"Alatas membagi pengertian korupsi menjadi … tipologi.", o:["4","5","6","7"], c:3, e:"7 tipologi: transaktif, ekstortif, investif, nepotisik, otogenik, supportif, defensif." },
+      { t:'mc', q:"Korupsi atas kesepakatan donor dan resipien untuk keuntungan kedua belah pihak disebut korupsi ....", o:["transaktif","laten","investif","defensif"], c:0, e:"Korupsi transaktif." },
+      { t:'mc', q:"Menurut Lord Acton (J.E.E. Dalberg Acton), sumber korupsi adalah ....", o:["diskresi","kemiskinan","kekuasaan","ketidakadilan"], c:2, e:"\"Power tends to corrupt; absolute power corrupts absolutely.\"" },
+      { t:'mc', q:"Yang BUKAN sumber timbulnya korupsi menurut Alatas adalah ....", o:["kurangnya pendidikan","kemiskinan","tiadanya tindakan hukuman yang keras","kurangnya sumber daya manusia"], c:3, e:"Kurangnya SDM tidak disebut Alatas sebagai sumber korupsi." },
+      { t:'mc', q:"Korupsi memiliki efek 'an enormous destruction effects' yang artinya ....", o:["Penghancuran yang hebat","Bahaya laten","Bahaya lemahnya hukum","Hilangnya demokrasi"], c:0, e:"Terjemahan harfiah 'enormous destruction effects'." },
+      { t:'mc', q:"Yang BUKAN ciri-ciri korupsi menurut Alatas adalah ....", o:["mengandung penipuan","menginginkan keputusan tegas yang mampu mempengaruhi keputusan lain","sebagai bentuk pengkhianatan","sebagai wujud dari budaya kolonialisme"], c:3, e:"Kolonialisme adalah sumber/sebab korupsi, bukan ciri." },
+      { t:'mc', q:"Efek penghancuran korupsi yang hebat bersifat ....", o:["Multi Interdisiplin","Multi Internasional","Multi Divitions","Multidimensional"], c:3, e:"Multidimensional — politik, ekonomi, sosial, hukum, moral." },
+    ]
+  },
+  {
+    id: 2,
+    title: "Sejarah & Perkembangan TPK di Indonesia",
+    cards: [
+      { t:'mc', q:"Usaha memberantas korupsi pada era Presiden Soekarno dibentuk ketentuan hukumnya berupa ....", o:["PRT/PM/06/1957","PRT/PM/06/1958","PRT/PM/06/1959","PRT/PM/06/1960"], c:0, e:"Peraturan Penguasa Militer Nomor PRT/PM/06/1957 — era Soekarno, dikomandani Kolonel Zulkifli Lubis." },
+      { t:'mc', q:"Ketentuan UU No. 24 Prp Tahun 1960 disempurnakan dengan ....", o:["UU 3/1970","UU 4/1971","UU 3/1972","UU 3/1971"], c:3, e:"UU 3/1971 era Soeharto, kemudian diganti UU 31/1999." },
+      { t:'mc', q:"Komisi Pemeriksaan Kekayaan Penyelenggara Negara dibentuk pada era Presiden ....", o:["Soekarno","Habibie","Abdurrahman Wahid","SBY"], c:2, e:"Lewat Keppres No. 127/1999, era Gus Dur." },
+      { t:'mc', q:"UU No. 11 Tahun 1980 mengatur Tindak Pidana ....", o:["penyelundupan aset negara","pencurian uang negara","suap","gratifikasi"], c:2, e:"Tindak Pidana Suap — era Soeharto." },
+      { t:'mc', q:"Apa yang dimaksud dengan 'ambtenaar' dalam KUHP?", o:["pegawai Negeri Sipil","pegawai Swasta","pejabat","penyelenggara Negara"], c:2, e:"'Ambtenaar' = pejabat (istilah Belanda dalam KUHP)." },
+      { t:'mc', q:"Pasal 2 ayat (1) UU 31/1999 jo UU 20/2001 mengatur TPK yang berkaitan dengan ....", o:["keamanan Negara","keuangan Negara","APBN","suap menyuap"], c:1, e:"Kerugian keuangan negara — kelompok TPK pertama." },
+      { t:'concept', front:"Klasifikasi 7 kelompok TPK menurut UU 31/1999 jo UU 20/2001", back:"(1) Kerugian keuangan negara (Ps. 2, 3); (2) Suap-menyuap (Ps. 5, 6, 11, 12 a-d, 13); (3) Penggelapan jabatan (Ps. 8-10); (4) Pemerasan (Ps. 12 e-g); (5) Perbuatan curang (Ps. 7, 12 h); (6) Benturan kepentingan pengadaan (Ps. 12 i); (7) Gratifikasi (Ps. 12B jo 12C)." },
+      { t:'mc', q:"Pemberian berupa perjalanan wisata, pengobatan cuma-cuma, dan fasilitas lainnya merupakan ....", o:["suap","pungli","gratifikasi","pemerasan"], c:2, e:"Gratifikasi diatur Pasal 12B UU TPK." },
+      { t:'mc', q:"Penyelenggaraan Negara yang Bersih dan Bebas dari KKN diatur dalam ....", o:["UU 28/1998","UU 28/1999","UU 31/1999","UU 7/2006"], c:1, e:"UU 28/1999 — era Habibie." },
+      { t:'mc', q:"Syarat dijatuhkannya hukuman mati untuk TPK diatur dalam Pasal ....", o:["Pasal 2 ayat (1)","Pasal 2 ayat (2)","Pasal 1 ayat (1)","Pasal 3"], c:1, e:"Pasal 2 ayat (2) — hukuman mati untuk korupsi dalam 'keadaan tertentu'." },
+    ]
+  },
+  {
+    id: 3,
+    title: "Sifat Melawan Hukum & Korporasi",
+    cards: [
+      { t:'mc', q:"Menurut Simon, melawan hukum berarti bertentangan dengan ....", o:["hukum pada umumnya","hukum tertulis saja","hukum adat atau tidak tertulis","hukum yang disahkan negara"], c:0, e:"Simon: melawan hukum = bertentangan dengan hukum pada umumnya." },
+      { t:'mc', q:"Dua ukuran sifat melawan hukum (formele & materieele wederrechttelijkheidsbegrip) dikemukakan oleh ....", o:["Lilik Mulyadi","Moeljatno","Bambang Poernomo","Supanto"], c:2, e:"Bambang Poernomo membagi SMH menjadi formil dan materiel." },
+      { t:'mc', q:"Suatu perbuatan tetap delik meski tidak diancam pidana dalam UU, asal bertentangan dengan hukum/ukuran di luar UU. Ini adalah pengertian ....", o:["melawan hukum materiel","melawan hukum materiel dalam fungsi positif","melawan hukum materiel dalam fungsi negatif","melawan hukum formil"], c:1, e:"Fungsi POSITIF = bisa memidanakan meski tidak diatur UU. Bandingkan fungsi negatif = bisa membebaskan." },
+      { t:'mc', q:"Yang BUKAN parameter melawan hukum adalah ....", o:["perbuatan tersebut melawan hukum","harus ada kesalahan pada pelaku","harus ada kerugian","harus terdapat unsur subjektivitas"], c:3, e:"Unsur subjektivitas bukan parameter melawan hukum." },
+      { t:'mc', q:"SMH materiel fungsi positif dalam UU 31/1999 diatur dalam ....", o:["Pasal 1 ayat (2)","Pasal 2 ayat (1)","Pasal 3 ayat (2)","Pasal 4 ayat (1)"], c:1, e:"Penjelasan Pasal 2 ayat (1) UU 31/1999." },
+      { t:'mc', q:"UU TPK yang pernah dan masih berlaku dengan ketentuan pemidanaannya adalah ....", o:["UU 31/1999 jo UU 20/2001","UU 1/1974","UU TPK 1971","UUD 1945"], c:0, e:"UU 31/1999 jo UU 20/2001 — UU TPK yang berlaku saat ini." },
+      { t:'mc', q:"'Strafbaar feit hanya dapat diwujudkan manusia; fiksi badan hukum tidak berlaku di hukum pidana.' Diatur dalam KUHP Pasal ....", o:["56","57","58","59"], c:3, e:"Pasal 59 KUHP menganut subjek 'orang' saja." },
+      { t:'mc', q:"Dalam pemidanaan suatu korporasi, korporasi diwakilkan oleh ....", o:["pengurusnya","pendirinya","pemiliknya","pemodalnya"], c:0, e:"Pasal 20 ayat (3) UU 31/1999 — korporasi diwakili pengurusnya." },
+      { t:'concept', front:"Pendapat Muladi: pembenaran pertanggungjawaban pidana korporasi", back:"(1) Falsafah integralistik (keseimbangan individu & sosial); (2) asas kekeluargaan Pasal 33 UUD 1945; (3) memberantas anomie of success; (4) perlindungan konsumen; (5) kemajuan teknologi." },
+      { t:'concept', front:"Sistem pemberatan denda korporasi (Pasal 20 ayat 7 UU TPK)", back:"Maksimum pidana denda untuk korporasi ditambah 1/3 (sepertiga) dari ancaman maksimum." },
+    ]
+  },
+  {
+    id: 4,
+    title: "Sistem Pemidanaan TPK",
+    cards: [
+      { t:'mc', q:"Definisi 'sistem pemidanaan adalah aturan perundang-undangan yang berhubungan dengan sanksi pidana dan pemidanaan' dikemukakan oleh ....", o:["Barda Nawawi Arief","Nyoman Sarikat Putra Jaya","Supanto","Adi Sulistyono"], c:0, e:"Barda Nawawi Arief — pakar hukum pidana Indonesia." },
+      { t:'mc', q:"Pidana dijatuhkan sebagai pembalasan kepada orang yang berbuat jahat. Hal ini adalah teori ....", o:["preventif","retributif","gabungan","retroaktif"], c:1, e:"Teori retributif = pembalasan (vergeldingstheorie)." },
+      { t:'mc', q:"Model perumusan ancaman pidana KUMULATIF dalam UU Tipikor terdapat pada ....", o:["Pasal 2 ayat (1)","Pasal 2 ayat (2)","Pasal 3 ayat (1)","Pasal 4"], c:0, e:"Pasal 2 ayat (1) — penjara + denda WAJIB bersamaan." },
+      { t:'mc', q:"Model perumusan CAMPURAN dalam UU Tipikor menggabungkan model alternatif dan ....", o:["subsidaritas","mixlegal system","kumulatif","perberatan"], c:2, e:"Campuran (Pasal 3) = alternatif + kumulatif — hakim bebas memilih penjara saja, denda saja, atau keduanya." },
+      { t:'mc', q:"Pidana mati dapat dijatuhkan untuk TPK yang dilakukan dalam ....", o:["keadaan biasa","kondisi normal","jumlah kecil","keadaan tertentu (bencana/krisis)"], c:3, e:"Pasal 2 ayat (2): 'keadaan tertentu' = bencana, kerusuhan, krisis ekonomi, dll." },
+      { t:'concept', front:"Tiga model perumusan ancaman pidana dalam UU Tipikor", back:"ALTERNATIF (Pasal 2 ayat 2 — pidana mati atau seumur hidup); KUMULATIF (Pasal 2 ayat 1 — penjara + denda); CAMPURAN (Pasal 3 — hakim bebas pilih)." },
+      { t:'concept', front:"Bila korporasi tidak mampu bayar denda dalam UU TPK", back:"UU Tipikor TIDAK mengatur. Bandingkan UU 8/2010 TPPU Pasal 9: diganti perampasan harta korporasi/personil pengendali; bila tidak mencukupi, kurungan pengganti." },
+      { t:'concept', front:"Strafmodus pidana dalam UU Tipikor", back:"Pidana pokok: penjara, denda, pidana mati (untuk keadaan tertentu). Pidana tambahan: perampasan barang, uang pengganti, penutupan usaha, pencabutan hak (Pasal 18)." },
+      { t:'concept', front:"Kelemahan dogmatik sistem pemidanaan TPK", back:"(1) Minimum khusus tidak dikenal KUHP; (2) Tidak ada mekanisme bila korporasi tidak bayar denda; (3) 'Keadaan tertentu' multitafsir; (4) Uang pengganti subsidair tidak jelas; (5) Kurang adaptif terhadap karakter extraordinary crime." },
+    ]
+  },
+  {
+    id: 5,
+    title: "Ketentuan Khusus & Sistem Peradilan Pidana",
+    cards: [
+      { t:'concept', front:"Pembalikan beban pembuktian (omkering van bewijslast)", back:"Sistem pembuktian dimana TERDAKWA membuktikan sendiri bahwa hartanya bukan hasil korupsi. UU Tipikor menganut yang TERBATAS/BERIMBANG — Pasal 12B, 37, 37A, 38B." },
+      { t:'concept', front:"Sistem pembuktian yang dianut KUHAP", back:"Pembuktian NEGATIF (negatief wettelijk) — berdasarkan alat bukti UU DAN keyakinan hakim." },
+      { t:'concept', front:"Conviction raisonee (pembuktian bebas)", back:"Dasar pembuktian pada hakim dengan alasan logis/rasional. Menurut Eddy Hiariej, digunakan dalam pemeriksaan tindak pidana ringan/cepat & perkara lalu lintas." },
+      { t:'concept', front:"Alat bukti elektronik dalam TPK", back:"Diatur Pasal 26A UU 20/2001 — informasi yang diucapkan, dikirim, diterima, atau disimpan secara elektronik, plus dokumen dalam pengertian luas." },
+      { t:'concept', front:"Asas umum beban pembuktian", back:"Beban pembuktian pada PENUNTUT UMUM (negara). 'Siapa yang menuduh, dia yang harus membuktikan.'" },
+      { t:'concept', front:"Pidana tambahan dalam UU Tipikor (Pasal 18)", back:"Perampasan barang, pembayaran uang pengganti, penutupan usaha, pencabutan hak. Uang pengganti tidak dibayar dalam 1 bulan → harta dirampas; bila tidak cukup → penjara pengganti." },
+      { t:'concept', front:"Dasar hukum Pengadilan Tipikor", back:"UU No. 46 Tahun 2009 (pasca putusan MK No. 012-016-019/PUU-IV/2006). Pengadilan Tipikor = satu-satunya pengadilan yang berwenang mengadili TPK." },
+      { t:'concept', front:"Syarat KPK menangani perkara (Pasal 11 UU 30/2002)", back:"(1) Melibatkan APH/penyelenggara negara; (2) mendapat perhatian masyarakat luas; (3) menyangkut kerugian negara ≥ Rp 1 miliar." },
+      { t:'concept', front:"Komposisi majelis hakim Pengadilan Tipikor", back:"Campuran — hakim karier + hakim ad hoc." },
+      { t:'concept', front:"Sub-sistem Sistem Peradilan Pidana TPK", back:"Kepolisian → Kejaksaan → Pengadilan Tipikor → Lembaga Pemasyarakatan. Plus KPK sebagai trigger mechanism (penyelidikan/penyidikan/penuntutan + pencegahan)." },
+    ]
+  },
+  {
+    id: 6,
+    title: "Lembaga Penegak Hukum TPK",
+    cards: [
+      { t:'concept', front:"KPK didirikan berdasarkan UU ....", back:"UU No. 30 Tahun 2002 (amanat Pasal 43 UU 31/1999) — diubah dengan UU No. 19 Tahun 2019." },
+      { t:'concept', front:"5 Tugas KPK (Pasal 6 UU 30/2002)", back:"(1) Koordinasi dengan APH lain; (2) Supervisi; (3) Penyelidikan/penyidikan/penuntutan TPK; (4) Pencegahan; (5) Monitor penyelenggaraan pemerintahan." },
+      { t:'concept', front:"Jumlah & masa jabatan Pimpinan KPK", back:"5 orang (1 Ketua + 4 Wakil Ketua), masa jabatan 4 tahun, dapat dipilih kembali 1 kali. Dipilih DPR dari calon yang diajukan Presiden via Pansel KPK." },
+      { t:'concept', front:"Dewan Pengawas KPK", back:"Diperkenalkan UU 19/2019. 5 orang. Memberi izin penyadapan, penggeledahan, penyitaan. Mengawasi pelaksanaan tugas KPK." },
+      { t:'concept', front:"Peleburan dualisme Pengadilan TPK", back:"Sebelum 2009: Pengadilan Umum vs Pengadilan Tipikor. Dualisme melebur lewat Pasal 5 UU No. 46 Tahun 2009." },
+      { t:'concept', front:"UU Penyelenggaraan Negara Bersih & Bebas KKN", back:"UU No. 28 Tahun 1999 — era Habibie." },
+      { t:'concept', front:"Bolehkah KPK menerbitkan SP3?", back:"Awalnya TIDAK (UU 30/2002). Sejak UU 19/2019: BOLEH untuk perkara yang penyidikan/penuntutannya belum selesai dalam ≥ 2 tahun." },
+      { t:'concept', front:"Lembaga penyidik TPK di Indonesia", back:"Kepolisian, Kejaksaan, dan KPK. KPK dapat mengambil alih perkara dari Polri/Kejaksaan (Pasal 9 UU 30/2002)." },
+    ]
+  },
+  {
+    id: 7,
+    title: "Pengembalian Aset Hasil TPK",
+    cards: [
+      { t:'concept', front:"Asset recovery (pengembalian aset)", back:"Upaya mengembalikan kekayaan negara yang hilang akibat TPK. Bentuk manifestasi restorative justice. Bab V UNCAC mengakuinya sebagai prinsip fundamental." },
+      { t:'concept', front:"Dua instrumen pengembalian kerugian negara", back:"(1) PIDANA: penyitaan → perampasan → uang pengganti (Pasal 18 UU 31/1999); (2) PERDATA: gugatan keperdataan (Pasal 32, 33, 34 UU 31/1999)." },
+      { t:'concept', front:"Penyitaan vs Perampasan", back:"PENYITAAN = tindakan penyidik atas barang yang berhubungan dengan TPK (sementara). PERAMPASAN = pengambilalihan aset oleh negara berdasarkan PUTUSAN PENGADILAN (permanen, mengalihkan kepemilikan)." },
+      { t:'concept', front:"Pembayaran uang pengganti (Pasal 18 UU 31/1999)", back:"Maks. sama dengan harta yang diperoleh dari TPK. Tidak dibayar dalam 1 bulan setelah inkracht → disita & dilelang. Tidak mencukupi → pidana penjara pengganti." },
+      { t:'concept', front:"UNCAC", back:"United Nations Convention Against Corruption — diterima Majelis Umum PBB 31 Oktober 2003. Ditandatangani di Merida, Meksiko. Diratifikasi Indonesia dengan UU No. 7 Tahun 2006." },
+      { t:'concept', front:"Bab V UNCAC", back:"Bab khusus tentang Asset Recovery (Pasal 51–59) — diakui sebagai PRINSIP FUNDAMENTAL UNCAC." },
+      { t:'concept', front:"MLA (Mutual Legal Assistance)", back:"Bantuan hukum timbal balik antar negara untuk penyelidikan, penyidikan, penuntutan, hingga perampasan aset di luar negeri. UU 1/2006 = dasar nasional. Otoritas Pusat = Menteri Hukum & HAM." },
+      { t:'concept', front:"4 mekanisme pengembalian aset internasional", back:"(1) MLA; (2) Ekstradisi; (3) Non-conviction-based confiscation (NCB); (4) Voluntary return (diplomatik)." },
+      { t:'concept', front:"Data kerugian TPK (UGM, 2001–2015)", back:"~Rp 203,9 triliun dari 2.321 kasus dengan 3.109 terdakwa. Hanya ±10% terkumpul — ±90% kerugian belum dikembalikan." },
+    ]
+  },
+  {
+    id: 8,
+    title: "Peran Serta Masyarakat & Upaya Non-Penal",
+    cards: [
+      { t:'mc', q:"Tujuan negara yang terhambat oleh korupsi adalah ....", o:["menjaga keamanan","memajukan pendidikan","mewujudkan kesejahteraan masyarakat","membangun infrastruktur"], c:2, e:"Pembukaan UUD 1945 alinea ke-4 — memajukan kesejahteraan umum." },
+      { t:'mc', q:"UU TPK sifat pengaturannya adalah ....", o:["mengatur seluruh aspek detail","mengatur teknis pelaksanaan saja","hanya mengatur pokok-pokoknya saja","tidak mengatur sanksi"], c:2, e:"UU TPK hanya mengatur pokok-pokok; teknis dijabarkan di PP/aturan turunan." },
+      { t:'mc', q:"Faktor non-penal pendukung korupsi adalah ....", o:["faktor genetik pelaku","faktor kondusif kondisi sosial baik langsung maupun tidak langsung","faktor cuaca","faktor demografi"], c:1, e:"Faktor kondusif = kondisi sosial yang menyuburkan korupsi." },
+      { t:'mc', q:"Posisi hukum pidana dalam pemberantasan korupsi:", o:["satu-satunya solusi","Hukum Pidana sebagai instrumen yang efektif mencegah kejahatan","tidak ada peran","hanya untuk pejabat"], c:1, e:"Hukum pidana efektif TAPI bukan satu-satunya — perlu juga upaya non-penal." },
+      { t:'mc', q:"Asas good governance yang krusial untuk anti-korupsi:", o:["Sentralisasi","Otonomi","Ketertutupan","Keterbukaan"], c:3, e:"Keterbukaan/transparansi = pilar utama good governance & anti-korupsi." },
+      { t:'concept', front:"5 Hak Masyarakat dalam Pemberantasan TPK (Pasal 41 ayat 2 UU 31/1999)", back:"(a) Mencari, memperoleh & memberi informasi dugaan TPK; (b) memperoleh pelayanan; (c) menyampaikan saran & pendapat; (d) memperoleh jawaban dalam 30 hari; (e) memperoleh perlindungan hukum." },
+      { t:'concept', front:"Kewajiban masyarakat dalam pemberantasan TPK", back:"Masyarakat wajib TAAT HUKUM dan menjadi fungsi PENGENDALIAN SOSIAL — check and balances pelaksanaan pemerintahan secara transparan dan adil." },
+      { t:'concept', front:"Premi untuk pelapor TPK", back:"Maks. 2 permil (0,2%) dari nilai kerugian negara yang dikembalikan, paling banyak Rp 200 juta. Diatur PP 71/2000 → PP 43/2018." },
+      { t:'concept', front:"Perlindungan Saksi & Korban (LPSK)", back:"UU No. 13 Tahun 2006 jo. UU No. 31 Tahun 2014. Bentuk: kerahasiaan identitas, pengamanan, perlindungan hukum." },
+    ]
+  },
+  {
+    id: 9,
+    title: "UNCAC & Tindak Pidana Pencucian Uang",
+    cards: [
+      { t:'concept', front:"UNCAC — kepanjangan & tanggal penting", back:"United Nations Convention Against Corruption. Diterima Majelis Umum PBB 31 Oktober 2003 (Resolusi A/RES/58/4). Ditandatangani di Merida, Meksiko. Berlaku efektif 14 Desember 2005." },
+      { t:'concept', front:"Indonesia meratifikasi UNCAC dengan UU ....", back:"UU No. 7 Tahun 2006." },
+      { t:'concept', front:"4 pilar UNCAC", back:"(1) Preventive measures (pencegahan); (2) Criminalization & law enforcement; (3) International cooperation; (4) Asset recovery." },
+      { t:'concept', front:"Asset recovery dalam UNCAC", back:"Diatur khusus dalam Bab V (Pasal 51–59). Diakui sebagai 'fundamental principle' UNCAC." },
+      { t:'concept', front:"UU TPPU Indonesia", back:"UU No. 8 Tahun 2010 tentang Pencegahan & Pemberantasan TPPU (menggantikan UU 15/2002 jo. UU 25/2003)." },
+      { t:'concept', front:"3 tahapan pencucian uang (FATF)", back:"(1) PLACEMENT — menempatkan dana hasil kejahatan ke sistem keuangan; (2) LAYERING — memisahkan dari sumber asalnya melalui transaksi rumit; (3) INTEGRATION — mengintegrasikan dana 'bersih' ke perekonomian sah." },
+      { t:'concept', front:"Korupsi sebagai predicate crime TPPU", back:"Pasal 2 ayat (1) huruf a UU 8/2010 — korupsi adalah tindak pidana asal (predicate crime) TPPU. Hasil TPK dapat menjadi objek TPPU." },
+      { t:'concept', front:"PPATK", back:"Pusat Pelaporan dan Analisis Transaksi Keuangan = Financial Intelligence Unit Indonesia. Dasar hukum: UU 8/2010 (sebelumnya UU 15/2002)." },
+      { t:'concept', front:"Strategi 'follow the money'", back:"Menyelidiki aliran dana, bukan hanya pelaku. Lebih efektif untuk asset recovery. Memerlukan information sharing antara KPK, PPATK, Polri, Kejaksaan." },
+      { t:'concept', front:"Hal-hal UNCAC yang belum penuh diadopsi Indonesia", back:"Illicit enrichment (Pasal 20 UNCAC) belum dikriminalisasi tersendiri. Bribery of foreign public officials (Pasal 16) terbatas. Private sector corruption (Pasal 21–22) belum spesifik." },
+    ]
+  }
+];
+
+// ===================== STATE =====================
+const STORAGE_KEY = 'hkum4310_progress_v1';
+let state = { xp: 0, streak: 0, bestStreak: 0, mastered: {} };
+let view = 'home';
+let session = null;
+
+function loadState(){
+  try{
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(s) Object.assign(state, s);
+  } catch{}
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch{}
+}
+
+// ===================== HELPERS =====================
+const totalCards = DECKS.reduce((n, d) => n + d.cards.length, 0);
+function totalMastered(d){ return d.cards.filter((_,i)=>state.mastered[`${d.id}-${i}`]).length; }
+function allMastered(){ return Object.keys(state.mastered).length; }
+
+// ===================== STATS =====================
+function renderStats(pulseId){
+  const el = document.getElementById('stats');
+  const level = Math.floor(state.xp/100) + 1;
+  el.innerHTML = `
+    <span class="stat" id="stat-xp"><span class="icon">⚡</span><span class="v">${state.xp}</span></span>
+    <span class="stat" id="stat-streak"><span class="icon">🔥</span><span class="v">${state.streak}</span></span>
+    <span class="stat" id="stat-level"><span class="v">Lv ${level}</span></span>
+  `;
+  if(pulseId){
+    const node = document.getElementById(`stat-${pulseId}`);
+    if(node){ node.classList.add('pulse'); setTimeout(()=>node.classList.remove('pulse'), 500); }
+  }
+}
+
+// ===================== HOME =====================
+function renderHome(){
+  const app = document.getElementById('app');
+  const am = allMastered();
+  const pct = Math.round(am/totalCards*100);
+  app.innerHTML = `
+    <section class="hero">
+      <h1>Belajar TPK</h1>
+      <p>Pilih modul untuk mulai latihan. Tiap kartu benar = +10 XP. Pertahankan streak untuk milestone!</p>
+    </section>
+    ${am > 0 ? `
+      <div class="resume-bar">
+        <div>
+          <span class="label">Progres total</span>
+          <span class="big">${am}/${totalCards}</span>
+        </div>
+        <div>
+          <span class="label">Dikuasai</span>
+          <span class="big">${pct}%</span>
+        </div>
+      </div>
+    ` : ''}
+    <div class="modules">
+      ${DECKS.map(d => {
+        const mastered = totalMastered(d);
+        const total = d.cards.length;
+        const mPct = Math.round(mastered/total*100);
+        const done = mastered === total;
+        return `
+          <button class="module ${done?'done':''}" onclick="startDeck(${d.id})">
+            <div class="module-badge">${d.id}</div>
+            <div class="module-title">${d.title}</div>
+            <div class="module-progress">
+              <div class="pbar"><div style="width:${mPct}%"></div></div>
+              <span>${mastered}/${total}</span>
+            </div>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ===================== STUDY =====================
+function startDeck(id){
+  const deck = DECKS.find(d => d.id === id);
+  const order = [...deck.cards.keys()].sort(()=>Math.random()-.5);
+  session = {
+    deck, order, idx: 0,
+    correct: 0, sessionXP: 0,
+    answered: false, revealed: false,
+  };
+  view = 'study';
+  renderStudy();
+}
+
+function renderStudy(){
+  const s = session;
+  const app = document.getElementById('app');
+  const card = s.deck.cards[s.order[s.idx]];
+  const cardKey = `${s.deck.id}-${s.order[s.idx]}`;
+  const isMastered = state.mastered[cardKey];
+  const sessionPct = (s.idx / s.deck.cards.length) * 100;
+
+  let body;
+  if(card.t === 'mc'){
+    body = `
+      <div class="card-label">
+        <span>Modul ${s.deck.id} · Pertanyaan ${s.idx+1}</span>
+        ${isMastered ? '<span class="mastered-pill">Dikuasai</span>' : ''}
+      </div>
+      <div class="card-q">${escapeHtml(card.q)}</div>
+      <div class="options" id="options">
+        ${card.o.map((opt, i) => `
+          <button class="option" onclick="answerMC(${i})" data-i="${i}">
+            <span class="option-letter">${String.fromCharCode(65+i)}</span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div id="feedback"></div>
+      <div id="next-area"></div>
+    `;
+  } else {
+    body = `
+      <div class="card-label">
+        <span>Modul ${s.deck.id} · Konsep ${s.idx+1}</span>
+        ${isMastered ? '<span class="mastered-pill">Dikuasai</span>' : ''}
+      </div>
+      <div class="concept-front">${escapeHtml(card.front)}</div>
+      ${s.revealed ? `
+        <div class="concept-back">${escapeHtml(card.back)}</div>
+        <div class="concept-actions">
+          <button class="dunno" onclick="answerConcept(false)">Belum hafal</button>
+          <button class="got" onclick="answerConcept(true)">Sudah hafal</button>
+        </div>
+      ` : `
+        <button class="reveal-btn" onclick="revealConcept()">Tampilkan Jawaban</button>
+      `}
+    `;
+  }
+
+  app.innerHTML = `
+    <div class="study-head">
+      <button class="back-btn" onclick="goHome()">← Kembali</button>
+      <div class="study-prog">${s.idx+1} / ${s.deck.cards.length}</div>
+    </div>
+    <div class="session-bar"><div style="width:${sessionPct}%"></div></div>
+    <div class="card" id="study-card">${body}</div>
+  `;
+}
+
+function revealConcept(){
+  session.revealed = true;
+  renderStudy();
+}
+
+function answerConcept(got){
+  const s = session;
+  const cardKey = `${s.deck.id}-${s.order[s.idx]}`;
+  if(got){
+    state.mastered[cardKey] = true;
+    s.correct++;
+    awardXP(10, 'xp');
+    incStreak();
+  } else {
+    breakStreak();
+  }
+  saveState();
+  setTimeout(nextCard, 250);
+}
+
+function answerMC(i){
+  if(session.answered) return;
+  session.answered = true;
+  const s = session;
+  const card = s.deck.cards[s.order[s.idx]];
+  const correct = i === card.c;
+  const cardKey = `${s.deck.id}-${s.order[s.idx]}`;
+
+  document.querySelectorAll('.option').forEach((el, j) => {
+    el.disabled = true;
+    if(j === card.c) el.classList.add('correct');
+    if(j === i && !correct) el.classList.add('wrong');
+  });
+
+  if(correct){
+    state.mastered[cardKey] = true;
+    s.correct++;
+    awardXP(10, 'xp');
+    incStreak();
+  } else {
+    breakStreak();
+    const cardEl = document.getElementById('study-card');
+    if(cardEl){
+      cardEl.classList.add('shake');
+      setTimeout(()=>cardEl.classList.remove('shake'), 400);
+    }
+  }
+
+  const fb = document.getElementById('feedback');
+  if(correct){
+    fb.innerHTML = `<div class="feedback success"><strong>Benar! +10 XP</strong>${card.e?`<span class="explain">${escapeHtml(card.e)}</span>`:''}</div>`;
+  } else {
+    fb.innerHTML = `<div class="feedback error"><strong>Jawaban: ${String.fromCharCode(65+card.c)}. ${escapeHtml(card.o[card.c])}</strong>${card.e?`<span class="explain">${escapeHtml(card.e)}</span>`:''}</div>`;
+  }
+  document.getElementById('next-area').innerHTML = `<button class="next-btn" onclick="nextCard()">Lanjut →</button>`;
+  saveState();
+}
+
+function awardXP(amt, pulseId){
+  state.xp += amt;
+  showXPPop(`+${amt} XP`);
+  renderStats(pulseId);
+}
+
+function showXPPop(text){
+  const el = document.createElement('div');
+  el.className = 'xp-pop';
+  el.textContent = text;
+  el.style.left = (window.innerWidth/2 - 40) + 'px';
+  el.style.top = (window.innerHeight/2 - 20) + 'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1300);
+}
+
+function incStreak(){
+  state.streak++;
+  if(state.streak > state.bestStreak) state.bestStreak = state.streak;
+  renderStats('streak');
+  if([5,10,25,50,100].includes(state.streak)){
+    showBurst(`${state.streak} 🔥`);
+  }
+}
+function breakStreak(){
+  if(state.streak > 0){
+    state.streak = 0;
+    renderStats('streak');
+  }
+}
+function showBurst(text){
+  const el = document.createElement('div');
+  el.className = 'burst';
+  el.innerHTML = `<div class="burst-text">${text}</div>`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1800);
+}
+
+function nextCard(){
+  session.idx++;
+  session.answered = false;
+  session.revealed = false;
+  if(session.idx >= session.deck.cards.length){
+    renderComplete();
+  } else {
+    renderStudy();
+  }
+}
+
+// ===================== COMPLETE =====================
+function renderComplete(){
+  const s = session;
+  const total = s.deck.cards.length;
+  const pct = Math.round(s.correct/total*100);
+  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '👍' : '💪';
+  const msg = pct >= 90 ? 'Luar biasa! Hampir sempurna.'
+    : pct >= 70 ? 'Bagus banget, terus pertahankan.'
+    : pct >= 50 ? 'Lumayan, ulangi yang masih salah.'
+    : 'Ayo coba lagi — kamu bisa!';
+  document.getElementById('app').innerHTML = `
+    <div class="complete">
+      <div class="complete-emoji">${emoji}</div>
+      <h2>Sesi Selesai</h2>
+      <p class="sub">${escapeHtml(s.deck.title)} — ${msg}</p>
+      <div class="summary">
+        <div class="summary-cell"><div class="v">${s.correct}/${total}</div><div class="l">Benar</div></div>
+        <div class="summary-cell"><div class="v">${pct}%</div><div class="l">Skor</div></div>
+        <div class="summary-cell"><div class="v">+${s.correct*10}</div><div class="l">XP</div></div>
+      </div>
+      <button class="next-btn" onclick="goHome()">Kembali ke Beranda</button>
+    </div>
+  `;
+}
+
+// ===================== NAV =====================
+function goHome(){ view='home'; session=null; renderHome(); }
+
+function resetAll(){
+  if(confirm('Reset semua progres? Tindakan ini tidak dapat dibatalkan.')){
+    state = { xp: 0, streak: 0, bestStreak: 0, mastered: {} };
+    saveState();
+    renderStats();
+    goHome();
+  }
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+// ===================== INIT =====================
+loadState();
+renderStats();
+renderHome();
+</script>
+</body>
+</html>
